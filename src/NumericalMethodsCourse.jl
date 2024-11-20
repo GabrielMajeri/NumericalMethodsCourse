@@ -14,7 +14,6 @@ function check_inputs_size(A::AbstractMatrix{T}, b::AbstractVector{T},
         error("Coefficient matrix must be square")
     end
 
-    println(size(b))
     if size(b) != (n,)
         error("Bias vector doesn't match matrix size")
     end
