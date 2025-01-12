@@ -8,7 +8,6 @@ function jacobi_overrelaxation(
     tolerance::Float64,
     criterion::StoppingCriterion,
 ) where {T<:Number}
-
     check_inputs_size(A, b, x⁰)
 
     # Extract the main diagonal of the matrix A

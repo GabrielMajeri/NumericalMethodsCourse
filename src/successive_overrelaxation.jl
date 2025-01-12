@@ -1,8 +1,9 @@
-"Computes the solution of a linear system using the ascending Gauss-Seidel method."
-function gauss_seidel(
+"Computes the solution of a linear system using the Successive Overrelaxation (SOR) method."
+function successive_overrelaxation(
     A::AbstractMatrix{T},
     b::AbstractVector{T},
     x⁰::AbstractVector{T},
+    ω::Float64,
     max_iterations::Int,
     tolerance::Float64,
     criterion::StoppingCriterion,
@@ -35,7 +36,7 @@ function gauss_seidel(
                 δ₂ += A[i, j] * solution[j]
             end
 
-            new_solution[i] = (1 / A[i, i]) * (b[i] - δ₁ - δ₂)
+            new_solution[i] = (ω / A[i, i]) * (b[i] - δ₁ - δ₂) + (1 - ω) * solution[i]
         end
 
         # Update the error criteria
@@ -72,11 +73,12 @@ function gauss_seidel(
     solution, num_iterations
 end
 
-"Computes the solution of a linear system using the descending Gauss-Seidel method."
-function gauss_seidel_backwards(
+"Computes the solution of a linear system using the descending Successive Overrelaxation (SOR) method."
+function successive_overrelaxation_backwards(
     A::AbstractMatrix{T},
     b::AbstractVector{T},
     x⁰::AbstractVector{T},
+    ω::Float64,
     max_iterations::Int,
     tolerance::Float64,
     criterion::StoppingCriterion,
@@ -109,7 +111,7 @@ function gauss_seidel_backwards(
                 δ₂ += A[i, j] * new_solution[j]
             end
 
-            new_solution[i] = (1 / A[i, i]) * (b[i] - δ₁ - δ₂)
+            new_solution[i] = (ω / A[i, i]) * (b[i] - δ₁ - δ₂) + (1 - ω) * solution[i]
         end
 
         # Update the error criteria

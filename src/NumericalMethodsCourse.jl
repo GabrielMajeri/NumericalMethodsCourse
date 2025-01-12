@@ -2,7 +2,7 @@ module NumericalMethodsCourse
 
 using LinearAlgebra
 
-export StoppingCriterion, correction, residual, jacobi, gauss_seidel, jacobi_overrelaxation
+export StoppingCriterion, correction, residual, jacobi, gauss_seidel, gauss_seidel_backwards, jacobi_overrelaxation, successive_overrelaxation, successive_overrelaxation_backwards
 
 @enum StoppingCriterion correction residual
 
@@ -31,5 +31,6 @@ end
 include("jacobi.jl")
 include("gauss_seidel.jl")
 include("jacobi_overrelaxation.jl")
+include("successive_overrelaxation.jl")
 
 end

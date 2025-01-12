@@ -37,7 +37,7 @@ end
     )
 end
 
-@testset "Gauss-Seidel ascending" begin
+@testset "Gauss-Seidel (ascending)" begin
     @test_throws ArgumentError gauss_seidel(
         A1,
         b1,
@@ -50,6 +50,22 @@ end
         gauss_seidel(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance, correction)...,
         A5 \ b5,
         23,
+    )
+end
+
+@testset "Gauss-Seidel (descending)" begin
+    @test_throws ArgumentError gauss_seidel_backwards(
+        A1,
+        b1,
+        [0.0; 0.0],
+        max_iterations,
+        tolerance,
+        correction,
+    )
+    @test check_convergence(
+        gauss_seidel_backwards(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance, correction)...,
+        A5 \ b5,
+        65,
     )
 end
 
@@ -75,5 +91,55 @@ end
         )...,
         A5 \ b5,
         59,
+    )
+end
+
+@testset "Successive overrelaxation (ascending)" begin
+    @test_throws ArgumentError successive_overrelaxation(
+        A1,
+        b1,
+        [0.0; 0.0],
+        0.5,
+        max_iterations,
+        tolerance,
+        correction,
+    )
+    @test check_convergence(
+        successive_overrelaxation(
+            A5,
+            b5,
+            [0.1; 0.2; 0.3],
+            0.8,
+            max_iterations,
+            tolerance,
+            correction,
+        )...,
+        A5 \ b5,
+        42,
+    )
+end
+
+@testset "Successive overrelaxation (descending)" begin
+    @test_throws ArgumentError successive_overrelaxation_backwards(
+        A1,
+        b1,
+        [0.0; 0.0],
+        0.5,
+        max_iterations,
+        tolerance,
+        correction,
+    )
+    @test check_convergence(
+        successive_overrelaxation(
+            A5,
+            b5,
+            [0.1; 0.2; 0.3],
+            0.8,
+            max_iterations,
+            tolerance,
+            correction,
+        )...,
+        A5 \ b5,
+        42,
     )
 end
