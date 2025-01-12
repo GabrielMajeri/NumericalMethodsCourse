@@ -1,8 +1,12 @@
 "Computes the solution of a linear system using the (ascending) Gauss-Seidel method."
 function gauss_seidel(
-    A::AbstractMatrix{T}, b::AbstractVector{T},
-    x⁰::AbstractVector{T}, max_iterations::Int,
-    tolerance::Float64, criterion::StoppingCriterion) where {T <: Number}
+    A::AbstractMatrix{T},
+    b::AbstractVector{T},
+    x⁰::AbstractVector{T},
+    max_iterations::Int,
+    tolerance::Float64,
+    criterion::StoppingCriterion,
+) where {T<:Number}
 
     check_inputs_size(A, b, x⁰)
 

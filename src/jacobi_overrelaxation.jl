@@ -1,8 +1,13 @@
 "Computes the solution of a linear system using the Jacobi Overrelaxation method."
 function jacobi_overrelaxation(
-    A::AbstractMatrix{T}, b::AbstractVector{T},
-    x⁰::AbstractVector{T}, ω::Float64, max_iterations::Int,
-    tolerance::Float64, criterion::StoppingCriterion) where {T <: Number}
+    A::AbstractMatrix{T},
+    b::AbstractVector{T},
+    x⁰::AbstractVector{T},
+    ω::Float64,
+    max_iterations::Int,
+    tolerance::Float64,
+    criterion::StoppingCriterion,
+) where {T<:Number}
 
     check_inputs_size(A, b, x⁰)
 

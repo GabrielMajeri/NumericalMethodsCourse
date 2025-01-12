@@ -2,14 +2,16 @@ module NumericalMethodsCourse
 
 using LinearAlgebra
 
-export StoppingCriterion, correction, residual,
-    jacobi, gauss_seidel, jacobi_overrelaxation
+export StoppingCriterion, correction, residual, jacobi, gauss_seidel, jacobi_overrelaxation
 
 @enum StoppingCriterion correction residual
 
 "Validate the size of the input parameters given to an iterative method."
-function check_inputs_size(A::AbstractMatrix{T}, b::AbstractVector{T},
-    x⁰::AbstractVector{T}) where {T <: Number}
+function check_inputs_size(
+    A::AbstractMatrix{T},
+    b::AbstractVector{T},
+    x⁰::AbstractVector{T},
+) where {T<:Number}
     # Extract the matrix dimensions
     m, n = size(A)
 
