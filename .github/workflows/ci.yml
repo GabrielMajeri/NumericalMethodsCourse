@@ -29,6 +29,21 @@ jobs:
       - name: Cache the installed Julia binary artifacts
         uses: julia-actions/cache@v2
 
+      - name: Install JuliaFormatter
+        run: julia -e 'using Pkg; Pkg.add("JuliaFormatter")'
+
+      - name: Format code
+        run: julia -e 'using JuliaFormatter; format(".")'
+
+      - name: Check for formatting differences
+        run: |
+          output=$(git diff --name-only)
+          if [ "$output" != "" ]; then
+              >&2 echo "Some files have not been formatted!"
+              echo "$output"
+              exit 1
+          fi
+
       - name: Build package
         uses: julia-actions/julia-buildpkg@latest
 
@@ -48,7 +63,7 @@ jobs:
 
       - name: Run tests (again) to generate JUnit-formatted report
         run: |
-          julia -e 'using TestReports; TestReports.test("NumericalMethodsCourse")'
+          julia --project=. -e 'using TestReports; TestReports.test("NumericalMethodsCourse")'
 
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
