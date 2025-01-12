@@ -63,7 +63,14 @@ end
         correction,
     )
     @test check_convergence(
-        gauss_seidel_backwards(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance, correction)...,
+        gauss_seidel_backwards(
+            A5,
+            b5,
+            [0.1; 0.2; 0.3],
+            max_iterations,
+            tolerance,
+            correction,
+        )...,
         A5 \ b5,
         65,
     )
