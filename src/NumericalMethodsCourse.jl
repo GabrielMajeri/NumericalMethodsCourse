@@ -10,7 +10,9 @@ export StoppingCriterion,
     gauss_seidel_backwards,
     jacobi_overrelaxation,
     successive_overrelaxation,
-    successive_overrelaxation_backwards
+    successive_overrelaxation_backwards,
+    symmetric_gauss_seidel,
+    symmetric_successive_overrelaxation
 
 @enum StoppingCriterion correction residual
 
@@ -40,5 +42,6 @@ include("jacobi.jl")
 include("gauss_seidel.jl")
 include("jacobi_overrelaxation.jl")
 include("successive_overrelaxation.jl")
+include("symmetric_methods.jl")
 
 end
