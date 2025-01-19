@@ -32,6 +32,8 @@ function symmetric_gauss_seidel(
 
     # While the stopping criterion is not yet met
     while true
+        @debug "Iteration #$num_iterations"
+
         # Compute the new solution vector, component-by-component
         for i = 1:n
             δ₁ = 0
@@ -59,27 +61,32 @@ function symmetric_gauss_seidel(
             new_solution[i] = (1 / A[i, i]) * (b[i] - δ₁ - δ₂)
         end
 
-        # Update the error criteria
+        # Update the error metrics
         corr = new_solution - solution
+        corr_norm = norm(corr)
+        @debug "Norm of correction/increment: $(@sprintf "%.4f" corr_norm)"
+
         res = b - A * new_solution
+        res_norm = norm(res)
+        @debug "Norm of residual error: $(@sprintf "%.4f" res_norm)"
 
         # Update the solution vector (by making a swap to conserve memory)
         solution, new_solution = new_solution, solution
         # Increment the number of iterations
         num_iterations += 1
 
-        # Compute the error vector
-        error = similar(b)
+        # Determine the value of the stopping criterion
+        error_norm = 0.0
         if criterion == correction
-            error = corr
+            error_norm = corr_norm
         elseif criterion == residual
-            error = res
+            error_norm = err_norm
         else
             error("Invalid stopping criterion")
         end
 
         # Check if we're converged
-        if norm(error) <= tolerance
+        if error_norm <= tolerance
             break
         end
 
@@ -122,6 +129,8 @@ function symmetric_successive_overrelaxation(
 
     # While the stopping criterion is not yet met
     while true
+        @debug "Iteration #$num_iterations"
+
         # Compute the new solution vector, component-by-component
         for i = 1:n
             δ₁ = 0
@@ -151,27 +160,32 @@ function symmetric_successive_overrelaxation(
                 (ω / A[i, i]) * (b[i] - δ₁ - δ₂) + (1 - ω) * intermediate_solution[i]
         end
 
-        # Update the error criteria
+        # Update the error metrics
         corr = new_solution - solution
+        corr_norm = norm(corr)
+        @debug "Norm of correction/increment: $(@sprintf "%.4f" corr_norm)"
+
         res = b - A * new_solution
+        res_norm = norm(res)
+        @debug "Norm of residual error: $(@sprintf "%.4f" res_norm)"
 
         # Update the solution vector (by making a swap to conserve memory)
         solution, new_solution = new_solution, solution
         # Increment the number of iterations
         num_iterations += 1
 
-        # Compute the error vector
-        error = similar(b)
+        # Determine the value of the stopping criterion
+        error_norm = 0.0
         if criterion == correction
-            error = corr
+            error_norm = corr_norm
         elseif criterion == residual
-            error = res
+            error_norm = err_norm
         else
             error("Invalid stopping criterion")
         end
 
         # Check if we're converged
-        if norm(error) <= tolerance
+        if error_norm <= tolerance
             break
         end
 

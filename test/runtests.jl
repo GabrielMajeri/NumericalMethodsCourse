@@ -41,8 +41,10 @@ end
 
 algorithms = Dict(
     "Jacobi" => (method = jacobi, a3_iterations = 35, a5_iterations = 44),
-    "Gauss-Seidel (ascending)" => (method = gauss_seidel, a3_iterations = 10, a5_iterations = 23),
-    "Gauss-Seidel (descending)" => (method = gauss_seidel_backwards, a3_iterations = 49, a5_iterations = 65),
+    "Gauss-Seidel (ascending)" =>
+        (method = gauss_seidel, a3_iterations = 10, a5_iterations = 23),
+    "Gauss-Seidel (descending)" =>
+        (method = gauss_seidel_backwards, a3_iterations = 49, a5_iterations = 65),
 )
 
 for (name, (method, a3_iterations, a5_iterations)) ∈ algorithms
@@ -75,9 +77,24 @@ for (name, (method, a3_iterations, a5_iterations)) ∈ algorithms
 end
 
 relaxation_algorithms = Dict(
-    "Jacobi overrelaxation" => (method = jacobi_overrelaxation, ω = 0.8, a3_iterations = 39, a5_iterations = 59),
-    "Successive overrelaxation (ascending)" => (method = successive_overrelaxation, ω = 0.9, a3_iterations = 20, a5_iterations = 33),
-    "Successive overrelaxation (descending)" => (method = successive_overrelaxation_backwards, ω = 0.8, a3_iterations = 43, a5_iterations = 78),
+    "Jacobi overrelaxation" => (
+        method = jacobi_overrelaxation,
+        ω = 0.8,
+        a3_iterations = 39,
+        a5_iterations = 59,
+    ),
+    "Successive overrelaxation (ascending)" => (
+        method = successive_overrelaxation,
+        ω = 0.9,
+        a3_iterations = 20,
+        a5_iterations = 33,
+    ),
+    "Successive overrelaxation (descending)" => (
+        method = successive_overrelaxation_backwards,
+        ω = 0.8,
+        a3_iterations = 43,
+        a5_iterations = 78,
+    ),
 )
 
 for (name, (method, ω, a3_iterations, a5_iterations)) ∈ relaxation_algorithms

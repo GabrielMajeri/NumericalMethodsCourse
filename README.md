@@ -24,6 +24,14 @@ To run the unit tests, use the following command:
 julia --project=. test/runtests.jl
 ```
 
+To enable debug logging for this package (which will lead to the printing of useful information at each iteration of the algorithms), set the `JULIA_DEBUG` variable:
+
+```sh
+export JULIA_DEBUG=NumericalMethodsCourse
+```
+
+and then run the code as usual.
+
 ## License
 
 The source code in this repo is available under the permissive [MIT license](LICENSE.txt).

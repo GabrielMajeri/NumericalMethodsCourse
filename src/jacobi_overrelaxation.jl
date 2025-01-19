@@ -33,31 +33,38 @@ function jacobi_overrelaxation(
 
     # While the stopping criterion is not yet met
     while true
+        @debug "Iteration #$num_iterations"
+
         # Apply the Jacobi Overrelaxation iteration step,
         #     x_{n + 1} = (I - ω D^{-1} A) * x_{n} + ω D^{-1} b
         new_solution = iteration_matrix * solution + additive_term
 
-        # Update the error criteria
+        # Update the error metrics
         corr = new_solution - solution
+        corr_norm = norm(corr)
+        @debug "Norm of correction/increment: $(@sprintf "%.4f" corr_norm)"
+
         res = b - A * new_solution
+        res_norm = norm(res)
+        @debug "Norm of residual error: $(@sprintf "%.4f" res_norm)"
 
         # Update the solution vector
         solution = new_solution
         # Increment the number of iterations
         num_iterations += 1
 
-        # Compute the error vector
-        error = similar(b)
+        # Determine the value of the stopping criterion
+        error_norm = 0.0
         if criterion == correction
-            error = corr
+            error_norm = corr_norm
         elseif criterion == residual
-            error = res
+            error_norm = err_norm
         else
             error("Invalid stopping criterion")
         end
 
-        # Check if we've converged
-        if norm(error) <= tolerance
+        # Check if we're converged
+        if error_norm <= tolerance
             break
         end
 

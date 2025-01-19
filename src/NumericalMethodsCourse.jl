@@ -1,6 +1,7 @@
 module NumericalMethodsCourse
 
 using LinearAlgebra
+using Printf: @sprintf
 
 export StoppingCriterion,
     correction,
