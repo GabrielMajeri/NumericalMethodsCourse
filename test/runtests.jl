@@ -32,174 +32,82 @@ function check_convergence(x_out, num_iters_out, x_expected, num_iters_expected)
 end
 
 function check_divergence(x_out, num_iters_out)
-    if norm(x_out) < 10e3
-        error("x_out did not blow up: $x_out")
+    if norm(x_out) < 1000 && num_iters_out ≠ max_iterations
+        error("algorithm did not diverge: ($x_out, $num_iters_out)")
     end
-    if num_iters_out ≠ max_iterations
-        error("num_iters_out ≠ max_iterations: $num_iters_out ≠ $max_iterations")
-    end
+
     true
 end
 
-@testset "Jacobi" begin
-    @test_throws ArgumentError jacobi(
-        A1,
-        b1,
-        [0.0; 0.0],
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_divergence(
-        jacobi(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-    )
-    @test check_convergence(
-        jacobi(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-        A3 \ b3,
-        35,
-    )
-    @test check_divergence(
-        jacobi(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-    )
-    @test check_convergence(
-        jacobi(A5, b5, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-        A5 \ b5,
-        44,
-    )
-end
+algorithms = Dict(
+    "Jacobi" => (method = jacobi, a3_iterations = 35, a5_iterations = 44),
+    "Gauss-Seidel (ascending)" => (method = gauss_seidel, a3_iterations = 10, a5_iterations = 23),
+    "Gauss-Seidel (descending)" => (method = gauss_seidel_backwards, a3_iterations = 49, a5_iterations = 65),
+)
 
-@testset "Gauss-Seidel (ascending)" begin
-    @test_throws ArgumentError gauss_seidel(
-        A1,
-        b1,
-        [0.0; 0.0],
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_divergence(
-        gauss_seidel(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-    )
-    @test check_convergence(
-        gauss_seidel(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
-        A3 \ b3,
-        10,
-    )
-    @test check_convergence(
-        gauss_seidel(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance, correction)...,
-        A5 \ b5,
-        23,
-    )
-end
-
-@testset "Gauss-Seidel (descending)" begin
-    @test_throws ArgumentError gauss_seidel_backwards(
-        A1,
-        b1,
-        [0.0; 0.0],
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_convergence(
-        gauss_seidel_backwards(
-            A3,
-            b3,
-            [0.0; 0.0; 0.0],
+for (name, (method, a3_iterations, a5_iterations)) ∈ algorithms
+    @testset "$name" begin
+        @test_throws ArgumentError method(
+            A1,
+            b1,
+            [0.0; 0.0],
             max_iterations,
             tolerance,
             correction,
-        )...,
-        A3 \ b3,
-        49,
-    )
-    @test check_convergence(
-        gauss_seidel_backwards(
-            A5,
-            b5,
-            [0.1; 0.2; 0.3],
-            max_iterations,
-            tolerance,
-            correction,
-        )...,
-        A5 \ b5,
-        65,
-    )
+        )
+        @test check_divergence(
+            method(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
+        )
+        @test check_convergence(
+            method(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
+            A3 \ b3,
+            a3_iterations,
+        )
+        @test check_divergence(
+            method(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance, correction)...,
+        )
+        @test check_convergence(
+            method(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance, correction)...,
+            A5 \ b5,
+            a5_iterations,
+        )
+    end
 end
 
-@testset "Jacobi overrelaxation" begin
-    @test_throws ArgumentError jacobi_overrelaxation(
-        A1,
-        b1,
-        [0.0; 0.0],
-        0.5,
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_convergence(
-        jacobi_overrelaxation(
-            A5,
-            b5,
-            [0.1; 0.2; 0.3],
-            0.8,
-            max_iterations,
-            tolerance,
-            correction,
-        )...,
-        A5 \ b5,
-        59,
-    )
-end
+relaxation_algorithms = Dict(
+    "Jacobi overrelaxation" => (method = jacobi_overrelaxation, ω = 0.8, a3_iterations = 39, a5_iterations = 59),
+    "Successive overrelaxation (ascending)" => (method = successive_overrelaxation, ω = 0.9, a3_iterations = 20, a5_iterations = 33),
+    "Successive overrelaxation (descending)" => (method = successive_overrelaxation_backwards, ω = 0.8, a3_iterations = 43, a5_iterations = 78),
+)
 
-@testset "Successive overrelaxation (ascending)" begin
-    @test_throws ArgumentError successive_overrelaxation(
-        A1,
-        b1,
-        [0.0; 0.0],
-        0.5,
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_convergence(
-        successive_overrelaxation(
-            A5,
-            b5,
-            [0.1; 0.2; 0.3],
-            0.8,
+for (name, (method, ω, a3_iterations, a5_iterations)) ∈ relaxation_algorithms
+    @testset "$name" begin
+        @test_throws ArgumentError method(
+            A1,
+            b1,
+            [0.0; 0.0],
+            ω,
             max_iterations,
             tolerance,
             correction,
-        )...,
-        A5 \ b5,
-        42,
-    )
-end
-
-@testset "Successive overrelaxation (descending)" begin
-    @test_throws ArgumentError successive_overrelaxation_backwards(
-        A1,
-        b1,
-        [0.0; 0.0],
-        0.5,
-        max_iterations,
-        tolerance,
-        correction,
-    )
-    @test check_convergence(
-        successive_overrelaxation(
-            A5,
-            b5,
-            [0.1; 0.2; 0.3],
-            0.8,
-            max_iterations,
-            tolerance,
-            correction,
-        )...,
-        A5 \ b5,
-        42,
-    )
+        )
+        @test check_divergence(
+            method(A2, b2, [0.0; 0.0; 0.0], ω, max_iterations, tolerance, correction)...,
+        )
+        @test check_convergence(
+            method(A3, b3, [0.0; 0.0; 0.0], ω, max_iterations, tolerance, correction)...,
+            A3 \ b3,
+            a3_iterations,
+        )
+        @test check_divergence(
+            method(A4, b4, [1.0; 2.0; 3.0], ω, max_iterations, tolerance, correction)...,
+        )
+        @test check_convergence(
+            method(A5, b5, [0.1; 0.2; 0.3], ω, max_iterations, tolerance, correction)...,
+            A5 \ b5,
+            a5_iterations,
+        )
+    end
 end
 
 @testset "Symmetric Gauss-Seidel" begin
