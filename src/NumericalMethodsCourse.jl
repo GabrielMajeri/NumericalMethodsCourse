@@ -15,30 +15,7 @@ export StoppingCriterion,
     symmetric_gauss_seidel,
     symmetric_successive_overrelaxation
 
-@enum StoppingCriterion correction residual
-
-"Validate the size of the input parameters given to an iterative method."
-function check_inputs_size(
-    A::AbstractMatrix{T},
-    b::AbstractVector{T},
-    x⁰::AbstractVector{T},
-) where {T<:Number}
-    # Extract the matrix dimensions
-    m, n = size(A)
-
-    if m != n
-        throw(ArgumentError("Coefficient matrix must be square"))
-    end
-
-    if size(b) != (n,)
-        throw(DimensionMismatch("Bias vector doesn't match matrix size"))
-    end
-
-    if size(x⁰) != (n,)
-        throw(DimensionMismatch("Initial vector doesn't match matrix size"))
-    end
-end
-
+include("iterative_algorithm.jl")
 include("jacobi.jl")
 include("gauss_seidel.jl")
 include("jacobi_overrelaxation.jl")
