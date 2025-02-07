@@ -1,10 +1,3 @@
-"Validate that a given input matrix is symmetric, otherwise throws an error."
-function check_input_symmetric(A::AbstractMatrix)
-    if !issymmetric(A)
-        throw(ArgumentError("Coefficient matrix must be symmetric"))
-    end
-end
-
 struct SymmetricGaussSeidelAlgorithm <: IterativeAlgorithm end
 
 @kwdef struct SymmetricGaussSeidelAlgorithmParameters{T<:Number}

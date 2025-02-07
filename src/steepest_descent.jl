@@ -9,6 +9,12 @@ function steepest_descent(
     # Check that the input arguments are valid
     check_inputs_size(A, b, x⁰)
 
+    # Check that the system matrix is symmetric
+    check_input_symmetric(A)
+
+    # We should also ensure that it's positive definite,
+    # but that check would be very costly
+
     # Initialize the solution variable with the initial guess
     solution = x⁰
 

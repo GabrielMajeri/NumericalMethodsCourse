@@ -16,6 +16,7 @@ export StoppingCriterion,
     symmetric_successive_overrelaxation,
     steepest_descent
 
+include("common.jl")
 include("iterative_algorithm.jl")
 include("jacobi.jl")
 include("gauss_seidel.jl")
