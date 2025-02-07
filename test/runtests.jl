@@ -191,3 +191,27 @@ end
         37,
     )
 end
+
+@testset "Steepest Descent" begin
+    @test_throws ArgumentError steepest_descent(
+        A1,
+        b1,
+        [0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test check_divergence(
+        steepest_descent(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance)...,
+    )
+    @test check_divergence(
+        steepest_descent(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance)...,
+    )
+    @test check_divergence(
+        steepest_descent(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance)...,
+    )
+    @test check_convergence(
+        steepest_descent(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance)...,
+        A5 \ b5,
+        38,
+    )
+end
