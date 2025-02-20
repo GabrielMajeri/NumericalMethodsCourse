@@ -1,4 +1,5 @@
-"Computes the solution of a linear system using the steepest descent algorithm."
+"Computes the solution of a symmetric and positive definite linear system
+using the steepest descent algorithm."
 function steepest_descent(
     A::AbstractMatrix{T},
     b::AbstractVector{T},

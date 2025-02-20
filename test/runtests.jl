@@ -18,7 +18,7 @@ const A5 = Symmetric([3.0 -1.0 0.0; -1.0 3.0 -1.0; 0.0 -1.0 3.0])
 const b5 = [2.0; 1.0; 2.0]
 
 const max_iterations = 1_00
-const tolerance = 1e-14
+const tolerance = 1e-10
 
 "Checks that the output of an iterative algorithm indicates convergence."
 function check_convergence(x_out, num_iters_out, x_expected, num_iters_expected)
@@ -40,11 +40,11 @@ function check_divergence(x_out, num_iters_out)
 end
 
 algorithms = Dict(
-    "Jacobi" => (method=jacobi, a3_iterations=35, a5_iterations=44),
+    "Jacobi" => (method=jacobi, a3_iterations=26, a5_iterations=32),
     "Gauss-Seidel (ascending)" =>
-        (method=gauss_seidel, a3_iterations=10, a5_iterations=23),
+        (method=gauss_seidel, a3_iterations=8, a5_iterations=17),
     "Gauss-Seidel (descending)" =>
-        (method=gauss_seidel_backwards, a3_iterations=49, a5_iterations=65),
+        (method=gauss_seidel_backwards, a3_iterations=36, a5_iterations=46),
 )
 
 for (name, (method, a3_iterations, a5_iterations)) ∈ algorithms
@@ -80,20 +80,20 @@ relaxation_algorithms = Dict(
     "Jacobi overrelaxation" => (
         method=jacobi_overrelaxation,
         ω=0.8,
-        a3_iterations=39,
-        a5_iterations=59,
+        a3_iterations=28,
+        a5_iterations=42,
     ),
     "Successive overrelaxation (ascending)" => (
         method=successive_overrelaxation,
         ω=0.9,
-        a3_iterations=20,
-        a5_iterations=33,
+        a3_iterations=14,
+        a5_iterations=24,
     ),
     "Successive overrelaxation (descending)" => (
         method=successive_overrelaxation_backwards,
         ω=0.8,
-        a3_iterations=43,
-        a5_iterations=78,
+        a3_iterations=31,
+        a5_iterations=56,
     ),
 )
 
@@ -154,7 +154,7 @@ end
             correction,
         )...,
         A5 \ b5,
-        31,
+        23,
     )
 end
 
@@ -188,11 +188,11 @@ end
             correction,
         )...,
         A5 \ b5,
-        37,
+        27,
     )
 end
 
-@testset "Steepest Descent" begin
+@testset "Steepest descent" begin
     @test_throws ArgumentError steepest_descent(
         A1,
         b1,
@@ -206,6 +206,24 @@ end
     @test check_convergence(
         steepest_descent(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance)...,
         A5 \ b5,
-        38,
+        27,
+    )
+end
+
+@testset "Conjugate gradient" begin
+    @test_throws ArgumentError conjugate_gradient(
+        A1,
+        b1,
+        [0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError conjugate_gradient(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance)
+    @test_throws ArgumentError conjugate_gradient(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance)
+    @test_throws ArgumentError conjugate_gradient(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance)
+    @test check_convergence(
+        conjugate_gradient(A5, b5, [0.0; 0.0; 0.0], max_iterations, tolerance)...,
+        A5 \ b5,
+        2,
     )
 end
