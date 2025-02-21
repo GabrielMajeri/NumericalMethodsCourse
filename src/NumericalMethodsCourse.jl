@@ -15,7 +15,8 @@ export StoppingCriterion,
     symmetric_gauss_seidel,
     symmetric_successive_overrelaxation,
     steepest_descent,
-    conjugate_gradient
+    conjugate_gradient,
+    preconditioned_conjugate_gradient
 
 include("common.jl")
 include("iterative_algorithm.jl")

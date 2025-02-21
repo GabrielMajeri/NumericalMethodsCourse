@@ -81,3 +81,92 @@ function conjugate_gradient(
 
     solution, num_iterations
 end
+
+Preconditioner{T} = Union{AbstractMatrix{T},Factorization{T},UniformScaling}
+
+"Computes the solution of a symmetric and positive definite linear system
+using the conjugate gradient algorithm."
+function preconditioned_conjugate_gradient(
+    A::AbstractMatrix{T},
+    b::AbstractVector{T},
+    preconditioner::Preconditioner{T},
+    x⁰::AbstractVector{T},
+    max_iterations::Int,
+    tolerance::Float64,
+) where {T<:Number}
+    # Check that the input arguments are valid
+    check_inputs_size(A, b, x⁰)
+
+    # Check that the system matrix is symmetric
+    check_input_symmetric(A)
+
+    # The preconditioning matrix must also be symmetric (and positive definite)
+    # check_input_symmetric(preconditioner)
+
+    # Initialize the solution variable with the initial guess
+    solution = x⁰
+
+    # Create a counter variable for the number of iterations
+    # required for the algorithm to converge
+    num_iterations = 0
+
+    # Compute initial residue vector
+    res = b - A * solution
+
+    # Compute the preconditioned residue
+    z = preconditioner \ res
+
+    # Initial descent direction
+    p = z
+
+    rho_old = 0
+    rho_new = dot(z, res)
+    rho_0 = rho_new
+    rho_tolerance = tolerance * rho_0
+
+    # While the stopping criterion is not yet met
+    while true
+        @debug "Iteration #$num_iterations"
+
+        if num_iterations > 0
+            # Update the descent direction
+            beta = rho_new / rho_old
+            p = z + beta * p
+        end
+
+        # Next element of Krylov basis
+        w = A * p
+
+        # Compute the optimal step size
+        rate = rho_new / dot(p, w)
+
+        # Perform a step of the conjugate gradient algorithm
+        solution = solution + rate * p
+
+        # Update the residual
+        res = res - rate * w
+
+        z = preconditioner \ res
+
+        # Update the ρ variables
+        rho_old = rho_new
+        rho_new = dot(z, res)
+
+        @debug "Square of norm of (preconditioned) residual error: $(@sprintf "%.4f" rho_new)"
+
+        # Increment the number of iterations
+        num_iterations += 1
+
+        # Stop if we've reached the maximum allowed number of iterations
+        if num_iterations >= max_iterations
+            break
+        end
+
+        # Stop if we're below the desired error tolerance
+        if rho_new < rho_tolerance
+            break
+        end
+    end
+
+    solution, num_iterations
+end

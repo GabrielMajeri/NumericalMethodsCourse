@@ -40,11 +40,11 @@ function check_divergence(x_out, num_iters_out)
 end
 
 algorithms = Dict(
-    "Jacobi" => (method=jacobi, a3_iterations=26, a5_iterations=32),
+    "Jacobi" => (method = jacobi, a3_iterations = 26, a5_iterations = 32),
     "Gauss-Seidel (ascending)" =>
-        (method=gauss_seidel, a3_iterations=8, a5_iterations=17),
+        (method = gauss_seidel, a3_iterations = 8, a5_iterations = 17),
     "Gauss-Seidel (descending)" =>
-        (method=gauss_seidel_backwards, a3_iterations=36, a5_iterations=46),
+        (method = gauss_seidel_backwards, a3_iterations = 36, a5_iterations = 46),
 )
 
 for (name, (method, a3_iterations, a5_iterations)) ∈ algorithms
@@ -78,22 +78,22 @@ end
 
 relaxation_algorithms = Dict(
     "Jacobi overrelaxation" => (
-        method=jacobi_overrelaxation,
-        ω=0.8,
-        a3_iterations=28,
-        a5_iterations=42,
+        method = jacobi_overrelaxation,
+        ω = 0.8,
+        a3_iterations = 28,
+        a5_iterations = 42,
     ),
     "Successive overrelaxation (ascending)" => (
-        method=successive_overrelaxation,
-        ω=0.9,
-        a3_iterations=14,
-        a5_iterations=24,
+        method = successive_overrelaxation,
+        ω = 0.9,
+        a3_iterations = 14,
+        a5_iterations = 24,
     ),
     "Successive overrelaxation (descending)" => (
-        method=successive_overrelaxation_backwards,
-        ω=0.8,
-        a3_iterations=31,
-        a5_iterations=56,
+        method = successive_overrelaxation_backwards,
+        ω = 0.8,
+        a3_iterations = 31,
+        a5_iterations = 56,
     ),
 )
 
@@ -200,9 +200,27 @@ end
         max_iterations,
         tolerance,
     )
-    @test_throws ArgumentError steepest_descent(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance)
-    @test_throws ArgumentError steepest_descent(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance)
-    @test_throws ArgumentError steepest_descent(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance)
+    @test_throws ArgumentError steepest_descent(
+        A2,
+        b2,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError steepest_descent(
+        A3,
+        b3,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError steepest_descent(
+        A4,
+        b4,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
     @test check_convergence(
         steepest_descent(A5, b5, [0.1; 0.2; 0.3], max_iterations, tolerance)...,
         A5 \ b5,
@@ -218,12 +236,89 @@ end
         max_iterations,
         tolerance,
     )
-    @test_throws ArgumentError conjugate_gradient(A2, b2, [0.0; 0.0; 0.0], max_iterations, tolerance)
-    @test_throws ArgumentError conjugate_gradient(A3, b3, [0.0; 0.0; 0.0], max_iterations, tolerance)
-    @test_throws ArgumentError conjugate_gradient(A4, b4, [0.0; 0.0; 0.0], max_iterations, tolerance)
+    @test_throws ArgumentError conjugate_gradient(
+        A2,
+        b2,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError conjugate_gradient(
+        A3,
+        b3,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError conjugate_gradient(
+        A4,
+        b4,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
     @test check_convergence(
         conjugate_gradient(A5, b5, [0.0; 0.0; 0.0], max_iterations, tolerance)...,
         A5 \ b5,
         2,
+    )
+end
+
+@testset "Preconditioned conjugate gradient" begin
+    @test_throws ArgumentError preconditioned_conjugate_gradient(
+        A1,
+        b1,
+        I,
+        [0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError preconditioned_conjugate_gradient(
+        A2,
+        b2,
+        I,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError preconditioned_conjugate_gradient(
+        A3,
+        b3,
+        I,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test_throws ArgumentError preconditioned_conjugate_gradient(
+        A4,
+        b4,
+        I,
+        [0.0; 0.0; 0.0],
+        max_iterations,
+        tolerance,
+    )
+    @test check_convergence(
+        preconditioned_conjugate_gradient(
+            A5,
+            b5,
+            I,
+            [-1.0; 2.0; -3.0],
+            max_iterations,
+            tolerance,
+        )...,
+        A5 \ b5,
+        3,
+    )
+    @test check_convergence(
+        preconditioned_conjugate_gradient(
+            A5,
+            b5,
+            cholesky(A5),
+            [-1.0; 2.0; -3.0],
+            max_iterations,
+            tolerance,
+        )...,
+        A5 \ b5,
+        1,
     )
 end

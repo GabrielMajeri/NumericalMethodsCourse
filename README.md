@@ -9,6 +9,9 @@ Implemented methods:
 - [Relaxation-based methods](https://sabs-r3.github.io/scientific-computing/unit_2_linear_algebra/06-jacobi-relaxation-methods/):
     - Jacobi Overrelaxation
     - Successive Overrelaxation (ascending, descending and symmetric)
+- [Steepest descent / Gradient descent](https://en.wikipedia.org/wiki/Gradient_descent)
+- [Conjugate gradient method](https://en.wikipedia.org/wiki/Conjugate_gradient_method)
+    - Preconditioned conjugate gradient
 
 ## Development instructions
 
